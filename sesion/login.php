@@ -10,7 +10,6 @@
 
     <?php
 
-        session_start();
         error_reporting(E_ALL);
         ini_set("display_errors",1);
 
@@ -24,7 +23,9 @@
             $email = $_POST["email"]??"";
             $password = $_POST["contrasena"]??"";
 
-            $consulta = "SELECT * FROM users WHERE email = :e";
+            $admin = false;
+
+            $consulta = "SELECT * FROM admins WHERE email = :e";
                 $stmt = $_conexion->prepare($consulta);
                 $stmt->execute(
                     [
@@ -32,27 +33,51 @@
                     ]
                     );
 
-            $res = $stmt->fetch();
+            $res1 = $stmt->fetch();
 
+            if(!$res1){
+                $consulta = "SELECT * FROM users WHERE email = :e";
+                $stmt = $_conexion->prepare($consulta);
+                $stmt->execute(
+                    [
+                        "e"=>$email
+                    ]
+                    );
 
-            if(!$res){
-                $err_user = "El usuario o contraseña no son correctos";
+                $res2 = $stmt->fetch();
             }
             else{
-                var_dump($res);
-                /*
-                $user = $res;
-                if(password_verify($password, $user["password"])){
-                    $bien = "SE INICIO SESION!!";
+                $admin = true;
+            }
+            
 
-                    $_SESSION["usuario"] = $usuario;
+            //Si no es admin y el res de usuario no hay registro
+            if(!$admin && !$res2){
+                $err_user = "El usuario o contraseña no son correctos";
+            }
+            //Si es admin
+            elseif($admin){
+                if(password_verify($password, $res1["password"])){
+                    session_start();
+                    $_SESSION["admin"] = $res1["email"];
 
                     header("location: ../paginas/index.php");
-                } 
-                else {
-                    $err_password = "La contraseña no coincide!!";
                 }
-                    */
+                else{
+                    $err_user = "El usuario o contraseña no son correctos";
+                }
+            }
+            //Si el usuarios existe
+            else{
+                if(password_verify($password, $res2["password"])){
+                    session_start();
+                    $_SESSION["user"] = $res2["email"];
+
+                    header("location: ../paginas/index.php");
+                }
+                else{
+                    $err_user = "El usuario o contraseña no son correctos";
+                }
                 
             }
 

@@ -22,8 +22,8 @@
             $number = $_POST["number"]??"";
 
             $caracteres_especiales = ".\ñ";
-            $patron = "/^(?=.*[A-Z])(?=.*[$caracteres_especiales])[\w$caracteres_especiales]{10,}$/";
-
+            //$patron = "/^(?=.*[A-Z])(?=.*[$caracteres_especiales])[\w$caracteres_especiales]{10,}$/";
+            $patron = "/[a-zA-Z]/";
             if(!preg_match($patron,$password)){
                 $err_pass = "La contraseña debe tener al menos un caracter especial ($caracteres_especiales), una letra mayuscula y 10 o mas caracteres";
             }
