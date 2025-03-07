@@ -1,73 +1,157 @@
 <?php
 
-    error_reporting(E_ALL);
-    ini_set("display_errors",1);
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
 
+header("Content-Type: application/json");
 
-    header("Content-Type: application/json"); //se usa para enviar una cabecera HTTP 
-                                            // a palo seco, normalmente lo hemos usado para redirigir
-                                            // pero tambien se puede usar para indicar el tipo de contenido
-                                            // de la respuesta
-    require "../conexion_pdo.php";
-    
-    $metodo = $_SERVER["REQUEST_METHOD"]; //Guardar el metodo del cliente en la variable
-    $entrada = file_get_contents("php://input"); //lee el cuerpo de las solicitudes enviadas
+require "../conexion.php";
 
-    var_dump($entrada); //para ver que obtenemos
+$metodo = $_SERVER["REQUEST_METHOD"];
+$entrada = file_get_contents("php://input");
 
-    $entrada = json_decode($entrada, true); //convierte el JSON en un array asociativo
+var_dump($entrada);
 
-    var_dump($entrada);
+$entrada = json_decode($entrada, true);
 
-    
-    switch($metodo){
+switch ($metodo) {
 
-        case "GET":
-            controlGet($_conexion);
-            break;
+    case "GET":
 
-        default:
-            echo json_encode(["metodo" => "otro"]);
-            break;
+        controlGet($_conexion);
 
+        break;
+
+    case "POST":
+
+        controlPost($_conexion, $entrada);
+
+        break;
+
+    case "DELETE":
+
+        controlDelete($_conexion, $entrada);
+
+        break;
+
+    case "PUT":
+
+        controlPut($_conexion, $entrada);
+
+        break;
+
+    default:
+
+        echo json_encode(["metodo" => "otro"]);
+
+        break;
+}
+
+function controlGet($_conexion)
+{
+    if (isset($_GET["id_plan"]) && $_GET["id_plan"] != "") {
+
+        $consulta = "SELECT * FROM plans WHERE id = :i";
+        $stmt = $_conexion->prepare($consulta);
+        $stmt->execute(["i" => $_GET["id_plan"]]);
+    } else {
+        $consulta = "SELECT * FROM plans";
+        $stmt = $_conexion->prepare($consulta);
+        $stmt->execute();
     }
 
+    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    echo json_encode($res);
+}
 
-    //Empezamos con las funciones!!! :D
-    function controlGet($_conexion){
+function controlPost($_conexion, $entrada)
+{
 
-        //$ciudad = $_GET["ciudad"]??"";
+    if (isset($entrada["id"]) && isset($entrada["city"]) && isset($entrada["plan"])) {
 
-        if(isset($_GET["ciudad"])  and $_GET["ciudad"]!=""){
+        $consulta = "INSERT INTO plans (ID, city, plan)
+        VALUES (:i, :c, :p)";
+        $stmt = $_conexion->prepare($consulta);
+        $stmt->execute([
+            "i" => $entrada["id"],
+            "c" => $entrada["city"],
+            "p" => $entrada["plan"]
 
-            $consulta = "SELECT * FROM desarrolladoras WHERE ciudad = :c";
-            $stmt = $_conexion -> prepare($consulta);
-            $stmt -> execute(["c"=>$_GET["ciudad"]]);
+        ]);
 
+        if ($stmt) {
+
+            echo json_encode(["mensaje" => "Se ha insertado correctamente la fila"]);
+        } else {
+
+            echo json_encode(["mensaje" => "Liada criminal"]);
         }
-        else{
-
-            $consulta = "SELECT * FROM desarrolladoras";
-            $stmt = $_conexion->prepare($consulta);
-            $stmt -> execute();
-
-        }
-
-        $res = $stmt -> fetchAll(PDO::FETCH_ASSOC);
-        /***
-         * Devuevle todos los registros como un array ASOCIATIVO
-         * [
-         *  ["nombre_desarrolladora"=>"nombre1", ...],
-         *  ["nombre_desarrolladora"=>"nombre2", ...],
-         *  ["nombre_desarrolladora"=>"nombre3", ...]
-         * ]
-         */
-
-         echo json_encode($res);
-         //Lo contrario que el json_decode(), los valores del array asociativo, los transforma
-         //en JSON y los envía
     }
+}
 
+function controlPut($_conexion, $entrada)
+{
 
+    if (isset($entrada["id"]) && $entrada["id"] != "") {
+        $resFinal = [
+            "city",
+            "plan"
+        ];
 
-?>
+        $consulta2 = "SELECT * FROM plans WHERE id = :i";
+        $stmt = $_conexion->prepare($consulta2);
+        $stmt->execute([
+            "i" => $entrada["id"]
+        ]);
+        $res = $stmt->fetch();
+        ($entrada["city"] == "") ? $resFinal["city"] = $res["city"] : $resFinal["city"] = $entrada["city"];
+        ($entrada["plan"] == "") ? $resFinal["plan"] = $res["plan"] : $resFinal["plan"] = $entrada["plan"];
+        
+
+        $consulta = "UPDATE plans SET id = :i, city = :c, plan = :p WHERE id = :i";
+        $stmt = $_conexion->prepare($consulta);
+        $stmt->execute([
+            "i" => $entrada["id"],
+            "c" => $resFinal["city"],
+            "p" => $resFinal["plan"]
+        ]);
+
+        if ($stmt) {
+
+            echo json_encode(["Mensaje" => "Se ha actualizado correctamente la fila"]);
+        } else {
+
+            echo json_encode(["Mensaje" => "Liada criminal"]);
+        }
+    } else {
+
+        echo json_encode(["Mensaje" => "Debes introducir el titulo y el nombre de la desarrolladora para actualizar la tabla"]);
+    }
+}
+
+function controlDelete($_conexion, $entrada)
+{
+
+    if ($entrada["id"] != "") {
+
+        
+
+        $consulta = "DELETE FROM plans WHERE id = :i";
+        $stmt = $_conexion->prepare($consulta);
+        $stmt->execute([
+            "i" => $entrada["id"]
+        ]);
+
+        if ($stmt) {
+
+            echo json_encode(["mensaje" => "La desarrolladora se ha borrado correctamente"]);
+        } else {
+
+            echo json_encode(["mensaje" => "Error a la hora de eliminar la desarrolladora " . $entrada["titulo_borrar"]]);
+        }
+        
+    } else {
+
+        echo json_encode(["mensaje" => "No has introducido nada en el campo"]);
+    }
+}

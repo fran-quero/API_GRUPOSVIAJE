@@ -57,7 +57,8 @@
             }
             //Si es admin
             elseif($admin){
-                if(password_verify($password, $res1["password"])){
+                //if(password_verify($password, $res1["password"])){
+                if($password == $res1["password"]){
                     session_start();
                     $_SESSION["admin"] = $res1["email"];
 
