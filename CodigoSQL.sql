@@ -13,7 +13,7 @@ CREATE TABLE Admins (
 CREATE TABLE Plans (
     ID INT PRIMARY KEY,
     city VARCHAR(100),
-    plan JSON  
+    plan VARCHAR(255) NOT NULL  
 );
 
 -- Tabla grupos

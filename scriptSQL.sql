@@ -12,6 +12,8 @@ INSERT INTO `groups`(`ID`, `start_day`, `last_day`, `id_plans`) VALUES (1,'2025-
 INSERT INTO `groups`(`ID`, `start_day`, `last_day`, `id_plans`) VALUES (2,'2025-05-03','2025-03-05',2);
 INSERT INTO `groups`(`ID`, `start_day`, `last_day`, `id_plans`) VALUES (3,'2025-07-09','2025-03-20',3);
 
-INSERT INTO plans VALUES (1, 'Málaga', '{"actividades": ["Moto de agua", "Visitar el casco histórico", "Subida montes de Málaga"]}');
-INSERT INTO plans VALUES (2, 'Paris', '{"actividades": ["Un dia en Disney Land Paris","Paseo en el Senna","Visitar torre Eiffel"]}');
-INSERT INTO plans VALUES (3, 'Amsterdam', '{"actividades": ["Paseo en bicicleta", "Visitar el barrio rojo", "Tardeo en sexshop"]}');
+INSERT INTO plans VALUES (1, 'Málaga', 'Visitar el centro histórico / Paseo en moto de agua');
+INSERT INTO plans VALUES (2, 'Paris', 'Visitar la Torre Eiffel/ Tres días en DisneyLand Paris');
+INSERT INTO plans VALUES (3, 'Amsterdam', 'Visitar el barrio rojo / Paseo en bicicleta');
+INSERT INTO plans VALUES (4, 'Roma', 'Conocer al Papa / Visitar el Coliseo Romano');
+INSERT INTO plans VALUES (5, 'Maldivas', 'Nadar con tiburones / Noche en una cabaña');
