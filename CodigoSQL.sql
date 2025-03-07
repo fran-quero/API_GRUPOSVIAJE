@@ -13,7 +13,7 @@ CREATE TABLE Admins (
 CREATE TABLE Plans (
     ID INT PRIMARY KEY,
     city VARCHAR(100),
-    plan JSON  
+    plan VARCHAR(255)  
 );
 
 -- Tabla grupos
@@ -30,7 +30,7 @@ CREATE TABLE Users (
     email VARCHAR(50) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    surname VARCHAR(150) NOT NULL
+    surname VARCHAR(150) NOT NULL,
     number INT NOT NULL,
     id_group INT NULL,
     FOREIGN KEY (id_group) REFERENCES Groups(ID)  
