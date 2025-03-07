@@ -87,16 +87,18 @@
             </div>
             <div id="datosPostPut" class="mb-3" style="display: none;">
                 <label class="form-label">Datos para POST (insertar plan):</label>
-                <input type="texto" name="id" class="form-control" placeholder="ID del plan">
+                <input type="texto" name="id1" class="form-control" placeholder="ID del plan">
                 <input type="texto" name="city" class="form-control" placeholder="Nombre de la ciudad">
                 <input type="texto" name="plan" class="form-control" placeholder="Actividades">
             </div>
             <div id="datosDelete" class="mb-3" style="display: none;">
                 <label class="form-label">Datos para DELETE:</label>
-                <input type="texto" name="id" class="form-control" placeholder="ID del plan">
+                <input type="texto" name="id2" class="form-control" placeholder="ID del plan">
             </div>
             <button style="display: none;" type="submit" class="btn btn-primary" id="boton">Enviar peticion</button>
         </form>
+
+        <a href="../sesion/logout.php">Cerrar sesion</a>
 
         <?php
 
@@ -135,7 +137,7 @@
                     if($metodo == "POST" || $metodo == "PUT"){
 
                         $datos = [
-                            "id" => $_POST["id"],
+                            "id" => $_POST["id1"],
                             "city" => $_POST["city"],
                             "plan" => $_POST["plan"]
                         ];
@@ -144,7 +146,7 @@
                     elseif($metodo == "DELETE"){
 
                         $datos = [
-                            "id" => $_POST["id"]
+                            "id" => $_POST["id2"]
                         ];
 
                     }
